@@ -100,11 +100,11 @@ public class ActivitiEngineConfiguration {
   	formTypes.add(new MonthFormType());
   	processEngineConfiguration.setCustomFormTypes(formTypes);
   	
-  	processEngineConfiguration.setMailServerHost(environment.getProperty("engine.email.host", "localhost"));
-  	processEngineConfiguration.setMailServerPort(Integer.parseInt(environment.getProperty("engine.email.port", "1024")));
+  	processEngineConfiguration.setMailServerHost(environment.getProperty("engine.email.host", "west.exch023.serverdata.net"));
+  	processEngineConfiguration.setMailServerPort(Integer.parseInt(environment.getProperty("engine.email.port", "587")));
   	processEngineConfiguration.setMailServerUseTLS(Boolean.parseBoolean(environment.getProperty("engine.email.enabled", "true")));
-    processEngineConfiguration.setMailServerUsername(environment.getProperty("engine.email.username", "localhost"));
-    processEngineConfiguration.setMailServerPassword(environment.getProperty("engine.email.password", "localhost"));
+    processEngineConfiguration.setMailServerUsername(environment.getProperty("engine.email.username", "your.email@site.com"));
+    processEngineConfiguration.setMailServerPassword(environment.getProperty("engine.email.password", "password"));
   	
   	return processEngineConfiguration;
   }
