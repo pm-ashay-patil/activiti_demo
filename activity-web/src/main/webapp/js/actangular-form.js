@@ -24,10 +24,10 @@ function $form(FormData, $injector, formConfig){
 		}, fail);
 	};
 
-	this.handleTaskForm = function (taskId, options, noForm, success, fail){
+	this.handleTaskForm = function (taskId, options, noForm, success, fail, page){
 		var param = {taskId: taskId};
 		this.getFormData(param, function(formData){
-			handleForm(formData, options, noForm, success, fail);
+			page.formObject = handleForm(formData, options, noForm, success, fail);
 		}, fail);
 	};
 
@@ -56,7 +56,7 @@ function $form(FormData, $injector, formConfig){
 		var formHandler = formConfig.formHandlers[formData.formKey];
 
 		if(formHandler)
-			$injector.get(formHandler).handleForm(formData, options, noForm, success, fail);
+			return $injector.get(formHandler).handleForm(formData, options, noForm, success, fail);
 
 	};
 
@@ -105,25 +105,40 @@ angular.module('agForm', [])
 		return new $form(FormData, $injector, formConfig);
 	}];
 })
-.factory('DefaultFormHandler', function ($ui, $form){
+.factory('DefaultFormHandler', function ($ui, $form, $location){
 	return {
 		handleForm : function(formData, options, noForm, success, fail){
 			if(formData.formProperties.length > 0){
 				var formProperties = $form.getFormViewProperties(formData.formProperties);
-				$ui.showModal('views/form/form.html', 'FormPropertiesController', 
+				return {
+					title: 'Form',
+					formProperties: formProperties,
+					submitForm: function(){
+
+						if(formData.taskId !== null)
+							$form.submitTaskForm(formData.taskId, formProperties, success, fail);
+						else if(formData.processDefinitionId !== null)
+							$form.submitStartForm(formData.processDefinitionId, formProperties, success, fail);
+					},
+					cancel: function () {
+						$location.path("/tasks/inbox/" + formData.taskId);
+					}
+				};
+				/*$ui.showContent('views/form/formContent.html', 'FormPropertiesController', 
 						{formInfo: function () {return {formProperties: formProperties, options: options};}}, function(formProperties){
 							if(formData.taskId !== null)
 								$form.submitTaskForm(formData.taskId, formProperties, success, fail);
 							else if(formData.processDefinitionId !== null)
 								$form.submitStartForm(formData.processDefinitionId, formProperties, success, fail);
-						});
+						});*/
 			}else{
 				if(noForm) noForm();
 			}
 		}
 	};
 })
-.controller('FormPropertiesController', function ($scope, $modalInstance, formInfo) {
+.controller('FormPropertiesController', function ($scope, formInfo) {
+	console.log('Called');
 	$scope.readOnly = formInfo.options.isReadOnly || false;
 	$scope.title = formInfo.options.title || '_FORM';
 

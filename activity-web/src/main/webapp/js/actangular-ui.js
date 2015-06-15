@@ -178,6 +178,29 @@ angular.module('agUI',
 			if(closeOption)
 				opennedModals.current.closeOption = closeOption;
 		});
+	},
+	this.showContent = function (templateUrl, controller, resolve, onOK, onCancel, modalOptions, closeOption) {
+		return {templateUrl: templateUrl, controller: controller, resolve: resolve};
+		/*if(modalOptions)
+			angular.extend(options, modalOptions);
+
+		var modalInstance = $modal.open(options);
+		modalInstance.result.then(function (result) {
+			delete opennedModals.current;
+			if(onOK)
+				onOK(result);
+
+		}, function () {
+			delete opennedModals.current;
+			if(onCancel)
+				onCancel();
+		});
+
+		modalInstance.opened.then(function(){
+			opennedModals.current = modalInstance;
+			if(closeOption)
+				opennedModals.current.closeOption = closeOption;
+		});*/
 	};
 
 	this.showConfirmation = function (msg, params, onOK, onCancel){
@@ -662,8 +685,8 @@ angular.module('agUI',
 	$ui.registerModal('showStartForm', function(processDefinition, options, noForm, success, fail){
 		$form.handleStartForm(processDefinition.id, options, noForm, success, fail);
 	});
-	$ui.registerModal('showTaskForm', function(task, options, noForm, success, fail){
-		$form.handleTaskForm(task.id, options, noForm, success, fail);
+	$ui.registerModal('showTaskForm', function(task, options, noForm, success, fail, page){
+		$form.handleTaskForm(task.id, options, noForm, success, fail, page);
 	});
 
 });

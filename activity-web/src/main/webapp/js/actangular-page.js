@@ -3,7 +3,7 @@
 /* agPage */
 
 angular.module('agPage', [])
-.factory('ListPage', function ($q, $location){
+.factory('ListPage', function ($q, $location, $form){
 	return {
 		from: 0,
 		to: 0,
@@ -82,11 +82,21 @@ angular.module('agPage', [])
 			}
 		},
 		showItem: function(itemId){
-			var item = this.getItem(itemId);
+			var item = this.getItem(itemId), formObject;
 			if(item) {
 				this[this.itemName] = item;
 				this.controlsTemplate = this.itemControlsTemplate;
 				this.showingItem = true;
+				if(this.itemTemplate === 'views/form/formContent.html') {
+					this.processForm(item, this);
+
+					/*$form.handleTaskForm(item.id, {}, function () {}, function () {
+						console.log("Success");
+					}, function () {
+						console.log("Failure");
+					}, this);*/
+				}
+
 				return this;
 			}
 			var deferred = $q.defer();

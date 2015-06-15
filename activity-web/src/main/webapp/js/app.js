@@ -23,7 +23,8 @@ angular.module('agApp',
 .config(function(RestangularProvider) {
 	RestangularProvider.setRestangularFields({
 		  selfLink: 'url'
-		});
+	});
+	
 	RestangularProvider.addResponseInterceptor(function(data, operation, what, url, response, deferred) {
 		var extractedData;
 		// extract data meta data
@@ -123,6 +124,42 @@ angular.module('agApp',
 			page: function($taskPage, $route){
 				return $taskPage.getInboxPage($route.current.params.taskId);
 			}
+		}
+	}).
+	when('/tasks/inbox/:taskId?/form', {
+		title: 'FORM',
+		resolve: {
+			page: function($taskPage, $route){
+				return $taskPage.getFormPage($route.current.params.taskId);
+			}
+			/*,
+			form: function ($taskCache, Tasks, TaskPage, $route, $q) {
+				var task;
+				task = $taskCache.get($route.current.params.taskId);
+				if(task) {
+					TaskPage.processForm(task);
+				} else {
+					var deferred = $q.defer();
+					var me = this;
+					
+					Tasks.one($route.current.params.taskId).get().then(function(item){
+						console.log(TaskPage.processForm(item));
+						deferred.resolve(me);
+					}, function(response){
+						deferred.reject();
+						me.back(true);
+					});
+				}
+			}*/
+
+			/*function(){
+				return {
+					template:'views/listPage.html',
+					controlsTemplate: 'views/form/formControls.html',
+					showingItem: true,
+					itemTemplate: 'views/form/formContent.html'
+				};
+			}*/
 		}
 	}).
 	when('/tasks/mytasks/:taskId?', {

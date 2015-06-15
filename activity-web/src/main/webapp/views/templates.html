@@ -1463,6 +1463,38 @@
 	</form>
 </div>
 
+<div id="views/form/formControls.html">
+	<div class="col-md-2">
+		<button class="btn btn-default" tooltip="{{'_BACK' | translate}}" ng-click="page.back()">
+			<i class="glyphicon glyphicon-chevron-left"> </i>
+		</button>
+		<button class="btn btn-default" tooltip="{{'_REFRESH' | translate}}" ng-click="page.task.refresh()">
+			<i class="glyphicon glyphicon-refresh"> </i>
+		</button>
+	</div>
+	<div class="col-md-8 hname">
+		<div>{{page.task.id}} - {{page.task.name}}</div>
+	</div>
+</div>
+
+<div id="views/form/formContent.html">
+	<div class="userForm">
+		<div class="header">
+			<h3 class="title">{{page.formObject.title | translate}}</h3>
+		</div>
+		<form name="formPropertiesForm" autocomplete="off" ng-submit="page.formObject.submitForm(formPropertiesForm.$valid)" novalidate>
+			<div class="body">
+				<div class="row formProp" ng-repeat="formProperty in page.formObject.formProperties" ng-include="formProperty.view"></div>
+
+			</div>
+			<div class="itemCount">
+				<button ng-if="!readOnly" class="btn btn-primary" type=submit>{{'_OK' | translate}}</button>
+				<button class="btn btn-warning" ag-click="page.formObject.cancel()">{{'_CANCEL' | translate}}</button>
+			</div>
+		</form>
+	</div>
+</div>
+
 <div id="views/form/string.html">
 	<div class="col-lg-12">
 		<div class="input-group">

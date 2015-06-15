@@ -40,7 +40,7 @@ angular.module('agTask', [])
 			  });
 		}).service('historic-task-instances');
 })
-.factory('TaskPage', function($ui){
+.factory('TaskPage', function($ui, $location){
 	function completeTask (task, data, success, fail) {
 		task.complete(data, success, fail);
 	};
@@ -82,7 +82,8 @@ angular.module('agTask', [])
 		},
 
 		complete : function (task) {
-			var me = this;
+			$location.path("/tasks/inbox/" + task.id + "/form");
+			/*var me = this;
 			if(task.taskDefinitionKey){
 				$ui.showTaskForm(task,{}, function(){
 					completeTask(task, undefined, function(result){
@@ -97,6 +98,38 @@ angular.module('agTask', [])
 					removeTask (me, task.id);
 					showTaskNotification(task, 'info', 'NOT_TASK_COMPLETE_OK');
 				});
+			}else{
+				completeTask(task, undefined, function(){
+					removeTask (me, task.id);
+					showTaskNotification(task, 'info', 'NOT_TASK_COMPLETE_OK');
+				},
+				function (response){
+					me.back(true);
+					showTaskNotification(task, 'danger', 'NOT_TASK_COMPLETE_FAIL');
+				});
+				
+			}*/
+		},
+
+		processForm : function (task, page) {
+			var me = this;
+			if(task.taskDefinitionKey){
+				$ui.showTaskForm(task,{}, function(){
+					completeTask(task, undefined, function(result){
+						removeTask (me, task.id);
+						showTaskNotification(task, 'info', 'NOT_TASK_COMPLETE_OK');
+					},
+					function (response){
+						me.back(true);
+						showTaskNotification(task, 'danger', 'NOT_TASK_COMPLETE_FAIL');
+					});
+				}, function(result){
+					removeTask (me, task.id);
+					showTaskNotification(task, 'info', 'NOT_TASK_COMPLETE_OK');
+				}, function (response){
+					me.back(true);
+					showTaskNotification(task, 'danger', 'NOT_TASK_COMPLETE_FAIL');
+				}, page);
 			}else{
 				completeTask(task, undefined, function(){
 					removeTask (me, task.id);
@@ -134,6 +167,28 @@ angular.module('agTask', [])
 	};
 
 })
+.factory('FormPage', function($ui, $location){
+	function completeTask (task, data, success, fail) {
+		task.complete(data, success, fail);
+	};
+	function showTaskNotification(task, type, key){
+		$ui.showNotification({type: type, translateKey: key, translateValues :{taskId: task.id, name: task.name}});
+	}
+	function removeTask (page, taskId) {
+		page.back(true);
+		page.cache.remove(taskId);
+	};
+	return {
+		okHandler : function () {
+			console.log("Ok Clicked");
+		},
+		cancelHandler : function () {
+			console.log("Cancel Clicked");
+		}
+
+	};
+
+})
 .service('$taskService', function(Tasks){
 	this.createTask = function(task){
 		return Tasks.post(task);
@@ -142,10 +197,40 @@ angular.module('agTask', [])
 		return parentTask.createSubTask(subtask, success, failed);
 	};
 })
-.service('$taskPage', function($session, ListPage, Tasks, $taskCache, TaskPage, $historicTaskCache, HistoryTasks){
+.service('$taskPage', function($session, ListPage, Tasks, $taskCache, TaskPage, $historicTaskCache, HistoryTasks, FormPage){
 	var inboxPage = createTaskListPage('inbox', 'assignee'), myTasksPage = createTaskListPage('mytasks', 'owner'),
 	involvedPage = createTaskListPage('involved', 'involvedUser'), queuedPage = createTaskListPage('queued', 'candidateUser'),
-	archivedPage = createHistoricTaskListPage('archived', 'taskInvolvedUser');
+	archivedPage = createHistoricTaskListPage('archived', 'taskInvolvedUser'),
+	formPage = createTaskFormPage('inbox', 'assignee');
+
+	function createTaskFormPage(section, param){
+		var listPage = {
+				template: 'views/listPage.html',
+				itemControlsTemplate: 'views/form/formControls.html',
+				itemTemplate: 'views/form/formContent.html',
+				section: section,
+				itemName: 'task',
+				sortKeys: {id: 'id', priority: 'priority', dueDate: 'dueDate', createTime: 'createTime'},
+				requestParam : {start:0, order: 'desc', sort: 'id'},
+				listSize : 10,
+				queryResource: Tasks,
+				cache: $taskCache
+		};
+		listPage.requestParam[param] = $session.getUserId();
+		listPage = angular.extend(listPage,ListPage);
+		/*listPage.queryOne = function(taskId, success, fail){
+			var requestParams = angular.extend({taskId: taskId}, this.requestParams);
+			return this.queryList(requestParams,function(tasks){
+				if(tasks.length===0){
+					fail();
+				}else{
+					success(tasks[0]);
+				}
+			},fail);
+		};*/
+		return angular.extend(listPage,TaskPage);
+
+	};
 
 	function createTaskListPage(section, param){
 		var listPage = {
@@ -220,6 +305,10 @@ angular.module('agTask', [])
 
 	this.getInboxPage = function(taskId){
 		return inboxPage.show(taskId);
+	};
+
+	this.getFormPage = function(taskId){
+		return formPage.show(taskId);
 	};
 
 	this.getMyTasksPage = function(taskId){

@@ -637,3 +637,28 @@ white-space: nowrap;}
 .user-profile .subRow{margin-top: 5px;}
 .user-profile .colData{margin: 0; padding: 0;}
 .detail .user-profile-edit{font-size: 10px;}
+
+.userForm {
+  margin: 30px;
+}
+
+.userForm .header {
+  color: white;
+  text-align: center;
+  padding: 1px 1px 10px 1px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.userForm .input-group {
+  margin: 5px;
+}
+
+.userForm .itemCount {
+  margin: 10px;
+  text-align: center;
+}
+
+.userForm .itemCount button {
+  margin: 10px;
+}
