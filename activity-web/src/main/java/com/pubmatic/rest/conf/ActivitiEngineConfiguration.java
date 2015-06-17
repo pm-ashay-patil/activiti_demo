@@ -103,8 +103,8 @@ public class ActivitiEngineConfiguration {
   	processEngineConfiguration.setMailServerHost(environment.getProperty("engine.email.host", "west.exch023.serverdata.net"));
   	processEngineConfiguration.setMailServerPort(Integer.parseInt(environment.getProperty("engine.email.port", "587")));
   	processEngineConfiguration.setMailServerUseTLS(Boolean.parseBoolean(environment.getProperty("engine.email.enabled", "true")));
-    processEngineConfiguration.setMailServerUsername(environment.getProperty("engine.email.username", "your.email@site.com"));
-    processEngineConfiguration.setMailServerPassword(environment.getProperty("engine.email.password", "password"));
+    processEngineConfiguration.setMailServerUsername(environment.getProperty("engine.email.username", "ashay.patil@pubmatic.com"));
+    processEngineConfiguration.setMailServerPassword(environment.getProperty("engine.email.password", "#6&J#k"));
   	
   	return processEngineConfiguration;
   }
